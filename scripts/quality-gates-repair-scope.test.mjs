@@ -8,11 +8,17 @@
  * named a path the scope forbade — no honest completion existed and the
  * repair dead-locked (worker blocked, downstream review permanently pending).
  *
+ * Second incident (issue #173): the repair inherits the source task's
+ * `outOfScope` verbatim, and `classifyChangedPath` lets `outOfScope` win
+ * (`tdd.scope.out-of-scope-wins`). A derived candidate covered by an inherited
+ * directory pattern is therefore unregistrable, so the derivation skips it
+ * instead of widening the scope with an entry the gate always rejects.
+ *
  * Run: node --test scripts/quality-gates-repair-scope.test.mjs
  */
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { planQualityFollowUp, repairScopeFromFindings } from '../lib/quality-gates.js'
+import { pathMatchesScope, planQualityFollowUp, repairScopeFromFindings } from '../lib/quality-gates.js'
 
 function finding(extra = {}) {
   return { id: 'F1', severity: 'medium', problem: 'problem', requiredFix: 'fix it', ...extra }
@@ -96,4 +102,45 @@ test('end-to-end: generated repair round is satisfiable for the incident shape',
     repair.acceptance.every((criterion) => criterion.length > 0),
     'acceptance must stay non-empty',
   )
+})
+
+test('a candidate covered by the inherited outOfScope is not declared', () => {
+  const scope = repairScopeFromFindings(
+    [finding({
+      file: 'data/sample.txt',
+      requiredFix: 'edit deploy/compose/postfix/master.cf.inc and README.md',
+    })],
+    undefined,
+    ['deploy/compose/postfix/'],
+  )
+  assert.ok(
+    !scope.includes('deploy/compose/postfix/master.cf.inc'),
+    `covered path must be skipped, got ${JSON.stringify(scope)}`,
+  )
+  assert.ok(scope.includes('README.md'))
+  assert.ok(scope.includes('data/sample.txt'))
+})
+
+test('fallback survives when the inherited outOfScope covers every candidate', () => {
+  const scope = repairScopeFromFindings(
+    [finding({ file: 'deploy/only.txt', requiredFix: 'fix deploy/only.txt' })],
+    ['src/'],
+    ['deploy/'],
+  )
+  assert.deepEqual(scope, ['src/'])
+})
+
+test('end-to-end: generated repair declares no path its inherited outOfScope forbids', () => {
+  const closed = failedReview({
+    findings: [finding({
+      file: 'deploy/compose/postfix/master.cf.inc',
+      requiredFix: 'edit deploy/compose/postfix/master.cf.inc and docs/guide.md',
+    })],
+  })
+  const result = planQualityFollowUp(teamWithSource({ outOfScope: ['deploy/compose/postfix/'] }), closed)
+  const repair = result.created.find((item) => item.kind === 'repair')
+  assert.ok(repair, 'repair round must be generated')
+  assert.ok(repair.inScope.includes('docs/guide.md'), `docs/guide.md missing from ${JSON.stringify(repair.inScope)}`)
+  const forbidden = repair.inScope.filter((entry) => pathMatchesScope(entry, 'deploy/compose/postfix/'))
+  assert.deepEqual(forbidden, [], 'no declared path may be covered by the inherited outOfScope')
 })

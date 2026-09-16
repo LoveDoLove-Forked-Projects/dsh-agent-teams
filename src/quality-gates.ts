@@ -573,15 +573,25 @@ const REPAIR_SCOPE_LINE_SUFFIX = /:\d+$/
  * the source task's own inScope is kept as the fallback. Over-inclusion is
  * accepted: inScope is an audit upper bound, and the requiredFix text still
  * tells the implementer what to touch.
+ *
+ * A candidate that the source task's inherited `outOfScope` already covers is
+ * skipped instead: `classifyChangedPath` consults `outOfScope` before
+ * `inScope`, so declaring it would add an entry the member can never register
+ * — widening the scope must not manufacture that contradiction. Resolving the
+ * inherited patterns themselves stays with the generator-level conflict fix;
+ * this filter is a no-op once that lands.
  */
 export function repairScopeFromFindings(
   findings: readonly ReviewFinding[],
   fallback: string[] | undefined,
+  inheritedOutOfScope: readonly string[] = [],
 ): string[] | undefined {
   const derived: string[] = []
   const push = (raw: string): void => {
     const normalized = normalizeWorkspacePath(raw.replace(REPAIR_SCOPE_LINE_SUFFIX, ''))
-    if (normalized !== undefined && !derived.includes(normalized)) derived.push(normalized)
+    if (normalized === undefined || derived.includes(normalized)) return
+    if (inheritedOutOfScope.some((pattern) => pathMatchesScope(normalized, pattern))) return
+    derived.push(normalized)
   }
   for (const finding of findings) {
     if (nonemptyString(finding.file)) push(finding.file)
@@ -784,7 +794,7 @@ export function planQualityFollowUp(team: TeamState, closed: TeamTask): PlanQual
     dependencies: [sourceId],
     round: nextRound,
     objective: source?.objective ?? closed.objective ?? `Fix findings from ${sourceId}`,
-    inScope: repairScopeFromFindings(findings, source?.inScope),
+    inScope: repairScopeFromFindings(findings, source?.inScope, source?.outOfScope),
     outOfScope: source?.outOfScope,
     verify: source?.verify,
     acceptance: findings.map((finding) => finding.requiredFix),
