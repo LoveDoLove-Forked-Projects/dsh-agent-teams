@@ -97,7 +97,14 @@ export function apply(ctx) {
             appendFileSync(process.env.LAB_TRACE, JSON.stringify({ event: 'stable-prefix-passed', label, requests: budgets.length, precedingOrdinaryTurns: label === 'natural' ? 30 : 0, systemSha256: budgets[0].systemSha256, toolsSha256: budgets[0].toolsSha256 }) + '\n');
             appendFileSync(process.env.LAB_TRACE, JSON.stringify({ event: 'entry-case-passed', label, captain: agent.id, member: completed.members[0].id }) + '\n');
         }
-        for (const agent of ctx.agents.list()) { await agent.whenIdle(); if (ctx.sessions.get(agent.id) === agent.session) await ctx.sessions.flush(agent.session); }
+        for (const agent of ctx.agents.list()) {
+            await agent.whenIdle();
+            // Best effort: a handle may close while this loop awaits an earlier
+            // agent. Closing persists, so a closed handle needs no flush — and
+            // the host rejects flushing one.
+            try { if (ctx.sessions.get(agent.id) === agent.session) await ctx.sessions.flush(agent.session); }
+            catch (error) { if (String(error?.name) !== 'SessionHandleClosedError') throw error; }
+        }
         process.stdout.write('PROGRESSIVE_ENTRY_OK\n');
         ctx.get('appExit')(0);
     })().catch(error => { process.stderr.write(String(error.stack ?? error) + '\n'); ctx.get('appExit')(1); });
