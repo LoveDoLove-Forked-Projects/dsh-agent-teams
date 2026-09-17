@@ -30,7 +30,7 @@
 
 ## 版本更新
 
-[v0.1.20](./release-notes/v0.1.20.md) 仅把本文档中的版本引用同步到 npm `latest`，不含任何代码或行为变更，打包产物与 `0.1.19` 完全一致。上一份有实质变更的版本是 [v0.1.19](./release-notes/v0.1.19.md)：宿主禁用或改名委派工具时成员仍能正常启动；自动修复范围改为从 `requiredFix` 推导；新增队长专用的 `agent_teams_amend_task`。推荐 DeepSeek Harness `0.1.5-rc.1`，保留三个旧宿主目标。
+[v0.1.20](./release-notes/v0.1.20.md) 仅把本文档中的版本引用同步到 npm `latest`，不含任何代码或行为变更，打包产物与 [v0.1.19](./release-notes/v0.1.19.md) 完全一致；该版本带来上一份文档版本以来的实质变更：宿主禁用或改名委派工具时成员仍能正常启动；自动修复范围改为从 `requiredFix` 推导；新增队长专用的 `agent_teams_amend_task`。推荐 DeepSeek Harness `0.1.5-rc.1`，保留三个旧宿主目标。
 
 ## 为什么需要 AgentTeams？
 
