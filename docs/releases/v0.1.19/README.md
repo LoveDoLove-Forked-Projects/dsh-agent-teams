@@ -50,3 +50,5 @@ node scripts/harness-issue-verify.mjs --scenario repair-conflict --runtime-dir /
 失败尝试保留：两次测试把“exactly 2 words”解读为 `hello world`，运行时任务完成但字面文件断言失败；改用明确字面内容后复验通过。另一次模型先建 work 占位任务，自动 repair 未继承预设排除条件；原 runner 虽报告通过，但该次不计验收，补上来源类型和原始排除断言后重新通过。
 
 本地 typecheck/build/完整 verify 通过。最终包精确 `0.1.5-rc.1` 产品入口十项回归通过，见 `runtime-0.1.5-rc.1.json`；这十项使用模型 fixture，与上表真实 API 证据分开记录。
+
+`0.1.2-rc.1` 的真实 DeepSeek API 工具改名场景亦通过（15 次请求，成员实际执行、文件内容和任务完成均通过），见 `legacy-renamed.json`。这覆盖 #163 所报的旧宿主核心条件，不等于完整 Desktop GUI 验证。

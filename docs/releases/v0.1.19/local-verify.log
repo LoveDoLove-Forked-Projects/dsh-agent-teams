@@ -1,5 +1,5 @@
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify <REPOSITORY>
 > node scripts/verify.mjs && node scripts/fallback-tdd.mjs && node scripts/member-failure-tdd.mjs && pnpm verify:quality-gates && node scripts/lifecycle-verify.mjs && node scripts/stress-verify.mjs && pnpm verify:web-routes && pnpm verify:release && pnpm verify:skill && pnpm verify:harness-contract && pnpm verify:http-body && pnpm verify:compatibility && pnpm verify:capabilities && pnpm verify:member-spawn-recovery
 
 dsh-agent-teams offline verification
@@ -235,7 +235,7 @@ fallback TDD checks passed
 ℹ todo 0
 ℹ duration_ms 100.904167
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:quality-gates /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:quality-gates <REPOSITORY>
 > node scripts/quality-gates-tdd.mjs && node --test scripts/quality-gates-repair-scope.test.mjs scripts/quality-gates-amend.test.mjs
 
 quality-gates TDD — A. create contract
@@ -492,12 +492,12 @@ dsh-agent-teams complex stress verification
 
 all complex stress checks passed
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:web-routes /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:web-routes <REPOSITORY>
 > node scripts/web-routes-verify.mjs
 
 PASS Web routes: real host authentication, bounded bodies, trusted origins, fail-closed startup, disposal and reload
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:release /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:release <REPOSITORY>
 > node --test scripts/release-metadata.test.mjs
 
 ✔ stable latest requires the recommended host and bounded compatibility (1.884584ms)
@@ -515,12 +515,12 @@ PASS Web routes: real host authentication, bounded bodies, trusted origins, fail
 ℹ todo 0
 ℹ duration_ms 41.993666
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:skill /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:skill <REPOSITORY>
 > node scripts/sync-skill.mjs --check
 
 DSH skill mirrors are up to date: 10 skills, 121 files.
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:harness-contract /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:harness-contract <REPOSITORY>
 > node scripts/harness-compat-tdd.mjs && node scripts/stability-tdd.mjs && node scripts/lifecycle-verify.mjs --modern-harness && node scripts/member-failure-tdd.mjs --modern-harness && node scripts/lifecycle-verify.mjs --delivery-harness && node scripts/member-failure-tdd.mjs --delivery-harness
 
 ✔ native SubagentRuntime keeps its receiver through FIFO delivery and retirement guard (4.239834ms)
@@ -836,7 +836,7 @@ all lifecycle checks passed
 ℹ todo 0
 ℹ duration_ms 99.684125
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:http-body /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:http-body <REPOSITORY>
 > node --test scripts/http-body.test.mjs
 
 ✔ HTTP body reader returns 413 without losing the response or buffering the rest (22.655667ms)
@@ -850,7 +850,7 @@ all lifecycle checks passed
 ℹ todo 0
 ℹ duration_ms 72.376583
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:compatibility /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:compatibility <REPOSITORY>
 > node scripts/compatibility.mjs && node --test scripts/compatibility.test.mjs && node scripts/doctor.mjs
 
 Compatibility targets: 0.1.5-rc.1, 0.1.2-rc.1, 0.1.2-alpha.5, 0.1.2-alpha.2
@@ -870,12 +870,12 @@ Compatibility targets: 0.1.5-rc.1, 0.1.2-rc.1, 0.1.2-alpha.5, 0.1.2-alpha.2
 ℹ skipped 0
 ℹ todo 0
 ℹ duration_ms 113.976375
-Harness: 0.1.5-rc.1 (/Users/nanmi/workspace/myself_code/dsh-agent-teams/node_modules/.pnpm/@deepseek-ai+dsh@0.1.5-rc.1_2324dfbd71bcb1962e0b52dcfbe0d031/node_modules/@deepseek-ai/dsh)
+Harness: 0.1.5-rc.1 (<REPOSITORY>/node_modules/.pnpm/@deepseek-ai+dsh@0.1.5-rc.1_2324dfbd71bcb1962e0b52dcfbe0d031/node_modules/@deepseek-ai/dsh)
 DSH package identities checked: 231
 Dependency inspection passed.
 Checks files resolved from the supplied roots; does not identify the running process or prove plugin behavior.
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:capabilities /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:capabilities <REPOSITORY>
 > node --test scripts/capabilities.test.mjs
 
 ▶ stable tool presentation uses real scoped registry and prompt assembly
@@ -910,7 +910,7 @@ Checks files resolved from the supplied roots; does not identify the running pro
 ℹ todo 0
 ℹ duration_ms 205.7535
 
-> @nanmicoder/dsh-agent-teams@0.1.18 verify:member-spawn-recovery /Users/nanmi/workspace/myself_code/dsh-agent-teams
+> @nanmicoder/dsh-agent-teams@0.1.18 verify:member-spawn-recovery <REPOSITORY>
 > node --test scripts/member-spawn-recovery.test.mjs
 
 ▶ a member start drops the names the host rejects and succeeds
