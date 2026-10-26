@@ -116,6 +116,9 @@ CI 仅上传报告、日志和 fixture 状态，不上传 runtime 的 node_modul
 - 无后缀插件首次发布及 RC 产物提升到 `latest` 时，开发基线必须是清单中的 recommended 宿主，全部支持目标都要通过。当前 recommended 为 `0.2.1-rc.2`，不得把只在 Alpha 通过的包提升为普通用户默认版本。
 - 发版 tag 必须等于 `v<package.version>`，GitHub prerelease 标志与插件版本后缀一致；将 RC 提升到 npm `latest` 不会改变其 GitHub 预发布身份。稳定发布前查询 npm 当前 latest，拒绝倒退。
 - 准备 PR、版本或产物不表示已经发布。发布后读取 registry 的版本、integrity 与 dist-tag，并从 registry 再安装精确版本做消费者复验，记录与候选是否一致。
+- **已发布不等于桌面端 npm 入口已就绪。** 桌面端实际观察到 pnpm 11.28.5；默认 `minimumReleaseAge=1440` 分钟可能把 `@latest` 解析为旧版。精确版本、tgz 和 pnpm 10 的成功不能代替这个入口。CI 在 Ubuntu/Windows 用真实 pnpm 11 和临时 registry 验证“新发布回退旧版 / 满等待期选择新版 / registry 错误不能报成功”。
+- 正式发布后用 `node scripts/check-install-channel.mjs --pnpm-cli <pnpm-11.28.5/bin/pnpm.mjs> --registry https://registry.npmjs.org --expected-version <本次版本>` 检查默认等待期下实际选择；大陆镜像再跑一次。返回 1 表示选择的版本不是本次发布，不能宣称 npm 桌面安装已就绪；网络或工具异常同样不能算通过。该探针只验证包管理器解析，实际宿主加载仍由 runtime/桌面验证承担。
+- 首日 npm 渠道未就绪时，在 Release 中明确状态，提供已验收的 `github:NanmiCoder/dsh-agent-teams` 入口（需要 GitHub 网络），或等待 npm 版本满 24 小时。不要让用户逐次改版本例外，也不要关闭全局等待期或兼容检查。插件还没安装时无法替宿主改变这些策略。
 - 回退分别处理 npm dist-tag、用户 profile/锁文件和数据；保留不可变版本及 Git 历史。不通过删除或重指向 Git tag 来冒充 npm 回滚。
 
 当前 GitHub workflow 的 OIDC 写权限只授予 publish job；PR 和验收任务仅有仓库读取权限，无须真实模型密钥。新增的 GitHub artifact actions 固定到已审阅的 commit：upload `ea165f8d65b6e75b540449e92b4886f43607fa02`、download `d3f86a106a0bac45b974a628896c90dbdf5c8093`。下载 action 对摘要不符只发 warning，因此本工作流另外对候选文件做强制 SHA-256 校验。
