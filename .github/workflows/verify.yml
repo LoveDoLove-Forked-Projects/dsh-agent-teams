@@ -51,6 +51,7 @@ jobs:
           pnpm typecheck
           pnpm build
           pnpm verify
+          node --test scripts/harness-runtime-platform.test.mjs
           node --test scripts/fixtures/harness-model-case.test.mjs scripts/fixtures/harness-complex-case.test.mjs scripts/fixtures/harness-benchmark-scope.test.mjs
       - name: Pack the actual candidate once
         id: artifact
@@ -74,13 +75,15 @@ jobs:
           retention-days: 14
 
   windows:
-    name: Static checks (Windows)
+    name: Static checks and package (Windows)
     runs-on: windows-latest
     timeout-minutes: 20
     defaults:
       run:
         shell: bash
     steps:
+      - name: Exercise default Git for Windows line endings
+        run: git config --global core.autocrlf true
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
@@ -97,17 +100,30 @@ jobs:
           pnpm typecheck
           pnpm build
           pnpm verify
+          node --test scripts/harness-runtime-platform.test.mjs
           node --test scripts/fixtures/harness-model-case.test.mjs scripts/fixtures/harness-complex-case.test.mjs scripts/fixtures/harness-benchmark-scope.test.mjs
 
+      - name: Pack with strict shebang validation
+        run: |
+          npx --yes pnpm@12.15.0 pack --out "$RUNNER_TEMP/windows-candidate.tgz"
+          tar --list --file "$RUNNER_TEMP/windows-candidate.tgz"
+
   harness:
-    name: Real Harness (${{ matrix.host }})
+    name: Real Harness (${{ matrix.os }}, ${{ matrix.host }})
     needs: [build, windows]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
         host: ${{ fromJSON(needs.build.outputs.hosts) }}
+        os: [ubuntu-latest]
+        include:
+          - host: 0.2.1-rc.2
+            os: windows-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -147,7 +163,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: harness-${{ matrix.host }}
+          name: harness-${{ matrix.os }}-${{ matrix.host }}
           if-no-files-found: warn
           retention-days: 14
           path: |
@@ -201,10 +217,12 @@ jobs:
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
           const hosts = validatePackageCompatibility(pkg)
           assert.deepEqual(hosts, JSON.parse(process.env.EXPECTED_HOSTS))
-          for (const version of hosts) {
-            const report = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'host-reports', `harness-${version}`, 'result.json'), 'utf8'))
+          const targets = [...hosts.map(version => ({ version, os: 'ubuntu-latest' })), { version: '0.2.1-rc.2', os: 'windows-latest' }]
+          for (const { version, os } of targets) {
+            const report = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'host-reports', `harness-${os}-${version}`, 'result.json'), 'utf8'))
             assert.equal(report.passed, true, `Host ${version} did not pass`)
             assert.equal(report.version, version)
+            assert.equal(report.platform, os === 'windows-latest' ? 'win32' : 'linux')
             assert.equal(report.pluginVersion, pkg.version)
             assert.equal(report.artifactSha256, process.env.EXPECTED_SHA256)
             assert.ok(report.runs.length > 0 && report.runs.every(run => run.passed), `Host ${version} lacks successful functional evidence`)
