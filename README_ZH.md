@@ -92,7 +92,7 @@ dsh --version
 从 npm 安装或升级插件（不带版本号时使用 npm `latest`，当前为正式版 `0.1.27`）：
 
 ```sh
-dsh plugin --profile web add --save-exact @nanmicoder/dsh-agent-teams
+dsh plugin --profile web add --save-exact @nanmicoder/dsh-agent-teams@latest
 ```
 
 CLI 管理的安装可将 `web` 换成实际使用的 CLI profile。**安装后，停止并重新启动该 profile 的 Harness 进程，再刷新浏览器。** 安装插件不会自动升级宿主；Harness 的 `latest` 与插件的 `latest` 是两个独立渠道。
@@ -103,7 +103,7 @@ CLI 管理的安装可将 `web` 换成实际使用的 CLI profile。**安装后�
 dsh plugin --profile web add github:NanmiCoder/dsh-agent-teams
 ```
 
-更新时重新运行所选安装命令，再重启对应 profile。GitHub 默认分支的代码可能先于 npm `latest` 发布；默认分支包含已验证的 `lib/` 构建产物。仓库随代码分发服务端、客户端和类型产物，安装时不需要执行 `prepare` 或批准构建脚本。源码维护者每次修改源码后，都需运行 `pnpm build` 并更新已提交的产物。已经发布的 npm 产物保持不变。
+`@latest` 明确请求最新发布版，不是固定版本号；已有安装只重复裸包名时，包管理器可能保留旧的精确版本。更新时重新运行所选安装命令，再重启对应 profile。镜像源尚未同步新发布时，可在 npm 命令后追加 `--registry=https://registry.npmjs.org`。GitHub 默认分支的代码可能先于 npm `latest` 发布；默认分支包含已验证的 `lib/` 构建产物。仓库随代码分发服务端、客户端和类型产物，安装时不需要执行 `prepare` 或批准构建脚本。源码维护者每次修改源码后，都需运行 `pnpm build` 并更新已提交的产物。已经发布的 npm 产物保持不变。
 
 手动克隆源码的用户，拉取代码后需重新运行 `pnpm install --frozen-lockfile` 和 `pnpm build`，再重启对应的 Harness；只更新 Git 不会更新本地构建产物。详见[维护指南](./docs/maintenance-workflow.md)。
 

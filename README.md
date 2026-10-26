@@ -93,7 +93,7 @@ The command selects the host's npm `latest`; check `dsh --version` against the s
 Install or upgrade from npm using the package name (resolves npm `latest`, currently `0.1.27`):
 
 ```sh
-dsh plugin --profile web add --save-exact @nanmicoder/dsh-agent-teams
+dsh plugin --profile web add --save-exact @nanmicoder/dsh-agent-teams@latest
 ```
 
 For a CLI-managed installation, replace `web` with your active CLI profile. **Stop and restart that profile's Harness process, then refresh the browser.** Installing the plugin does not upgrade Harness; the host and plugin have independent `latest` channels.
@@ -104,7 +104,7 @@ Alternatively, install or update from the latest GitHub default branch without a
 dsh plugin --profile web add github:NanmiCoder/dsh-agent-teams
 ```
 
-Run the chosen install command again when updating, then restart the profile. GitHub default-branch code may be newer than npm `latest`. The default branch includes the verified server, client, and type build outputs in `lib/`. The repository distributes these outputs so installation does not need a `prepare` hook or build-script approval. Source maintainers must run `pnpm build` and update the committed outputs whenever the source changes. Existing npm releases remain immutable.
+The `@latest` channel explicitly requests the newest published plugin when updating an existing installation; it is not a numeric version pin. A bare package name can retain an already installed exact version. Run the chosen install command again when updating, then restart the profile. If a registry mirror has not synced the release, append `--registry=https://registry.npmjs.org` to the npm command. GitHub default-branch code may be newer than npm `latest`. The default branch includes the verified server, client, and type build outputs in `lib/`. The repository distributes these outputs so installation does not need a `prepare` hook or build-script approval. Source maintainers must run `pnpm build` and update the committed outputs whenever the source changes. Existing npm releases remain immutable.
 
 For a manually cloned checkout, run `pnpm install --frozen-lockfile` and `pnpm build` after pulling, then restart the corresponding Harness process. Updating Git alone does not update local build output. See the [maintenance guide](./docs/maintenance-workflow.md).
 
