@@ -124,6 +124,8 @@ jobs:
         include:
           - host: 0.2.1-rc.2
             os: windows-latest
+          - host: 0.2.1-rc.3
+            os: windows-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -217,7 +219,7 @@ jobs:
           const pkg = JSON.parse(readFileSync('package.json', 'utf8'))
           const hosts = validatePackageCompatibility(pkg)
           assert.deepEqual(hosts, JSON.parse(process.env.EXPECTED_HOSTS))
-          const targets = [...hosts.map(version => ({ version, os: 'ubuntu-latest' })), { version: '0.2.1-rc.2', os: 'windows-latest' }]
+          const targets = [...hosts.map(version => ({ version, os: 'ubuntu-latest' })), ...['0.2.1-rc.2', '0.2.1-rc.3'].map(version => ({ version, os: 'windows-latest' }))]
           for (const { version, os } of targets) {
             const report = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'host-reports', `harness-${os}-${version}`, 'result.json'), 'utf8'))
             assert.equal(report.passed, true, `Host ${version} did not pass`)
