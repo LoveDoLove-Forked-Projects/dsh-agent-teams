@@ -69,13 +69,15 @@ The conversation card and activity panel use Harness's official locale service. 
 
 ### Desktop app
 
-In the app sidebar, open **Plugins → Add plugin** and enter the npm package spec:
+In the app sidebar, open **Plugins → Add plugin**. For an update available immediately after release, enter the GitHub default-branch spec (no version suffix):
 
 ```text
-@nanmicoder/dsh-agent-teams
+github:NanmiCoder/dsh-agent-teams
 ```
 
-The package name resolves npm `latest`; no version suffix is needed. Install it, then choose **Enable now**. If the host asks for a restart, restart the desktop app. Use the package spec above for the published build; an npm or GitHub webpage URL is not the same install source. For Git installation, use the default-branch command below.
+For npm installation, enter `@nanmicoder/dsh-agent-teams@latest`. Desktop's pnpm 11 defaults to a 24-hour minimum release age: during that window it can select an older plugin even when the preview shows the newest version. If that older plugin is incompatible with your host, use the GitHub spec above or wait until the release has aged. Changing registry mirrors does not remove this policy. GitHub access is required for the Git route; it may contain newer code than npm.
+
+Install it, then choose **Enable now**. If the host asks for a restart, restart the desktop app. Do not disable compatibility checks or the global release-age policy to install the plugin.
 
 The desktop app supplies its own Harness core and package manager. Upgrading the global CLI does not upgrade that core, and an ordinary standalone CLI cannot manage its desktop profile. The CLI carrier installed by the desktop app can manage that profile in `0.2.1-rc.2`. Check the embedded core against the compatibility list. Harness `0.2.1-rc.2` is now the exact published target; its RC status is unchanged. The earlier source-only `0.2.0` prediction is no longer a support declaration. See the [release migration evidence](./docs/harness-0.2.1-rc.2/README.md).
 
