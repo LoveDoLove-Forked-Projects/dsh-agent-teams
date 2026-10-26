@@ -1,7 +1,8 @@
 /** Shared built-product scenarios for registry releases and explicitly identified source checkouts. */
 import { mkdirSync, writeFileSync, readFileSync, existsSync, copyFileSync, symlinkSync, unlinkSync, lstatSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hostVerification } from './harness-validation.mjs';
 
 const json = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2) + '\n');
 
@@ -21,6 +22,17 @@ export const linkDirectory = (target, path) => {
 };
 
 export const runtimeScenarios = ['lifecycle', 'fallback', 'failure', 'captain-idle-wakeup', 'progressive-entry', 'web-approval', 'protocol-compatibility', 'stability'];
+
+/** The direct fixture link cannot prove that a user's plugin install is accepted. */
+export async function runPluginInstallation({ version, pluginVersion, artifact, runtime, report, command, environment }) {
+    if (!hostVerification(version).pluginManagerInstall) return [];
+    const home = join(report, 'plugin-install-home');
+    const install = await command([process.execPath, join(runtime, 'node_modules/@deepseek-ai/dsh/lib/bin.js'), 'plugin', '--profile', 'web', 'add', '--save-exact', resolve(artifact)], runtime, environment({ DSH_HOME: home, DSH_TELEMETRY_DISABLED: '1' }), 'plugin-manager-install', 120000);
+    const installedPath = join(home, 'profiles/web/node_modules/@nanmicoder/dsh-agent-teams/package.json');
+    const installed = existsSync(installedPath) ? JSON.parse(readFileSync(installedPath, 'utf8')) : undefined;
+    const assertions = { exit0: install.code === 0 && !install.timedOut, exactPluginVersion: installed?.version === pluginVersion };
+    return [{ scenario: 'plugin-manager-install', passed: Object.values(assertions).every(Boolean), assertions }];
+}
 
 /** Run the same fixture and persisted-state assertions against an already prepared runtime. */
 export async function runRuntimeScenarios({ report, runtime, command, environment, selectedScenarios = runtimeScenarios, linkWorkspacePackages = false }) {
