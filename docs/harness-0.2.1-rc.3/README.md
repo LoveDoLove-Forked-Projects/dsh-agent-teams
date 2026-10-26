@@ -21,6 +21,8 @@ Local macOS arm64 validation passed with pnpm 10.33.0 and Node 26 (CI uses Node 
 
 Real provider credentials, native desktop interaction and migration of existing user data are outside the isolated fixture coverage. Do not equate these checks with a manual desktop acceptance test.
 
+Independent revalidation on 2026-10-26 passed frozen installation, typecheck, build and full `pnpm verify`. One locally built candidate (`a8b0a3bb01c21e9d9612d15334db4d16d573c3a976e01802b9c883ac7a4b9b6f`) passed all ten functional records and the real plugin-manager installation on both fresh rc.2 (295-package) and rc.3 (296-package) cohorts. A separate reviewer reproduced the published package's rejection and the candidate's successful installation in fresh web profiles, and verified empty version-exemption maps. The [original candidate CI run](https://github.com/NanmiCoder/dsh-agent-teams/actions/runs/40149169358) also passed all eleven declared host versions. Any later integration still requires its own final-head CI.
+
 ## Recovery
 
 Existing published artifacts and tags are immutable. Until a release includes rc.3, stay on rc.2 with `0.1.26`; do not bypass host compatibility checks.
