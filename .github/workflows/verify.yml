@@ -106,7 +106,7 @@ jobs:
       - name: Pack with strict shebang validation
         run: |
           npx --yes pnpm@12.15.0 pack --out "$RUNNER_TEMP/windows-candidate.tgz"
-          tar --list --file "$RUNNER_TEMP/windows-candidate.tgz"
+          tar --list --file "$(cygpath -u "$RUNNER_TEMP/windows-candidate.tgz")"
 
   harness:
     name: Real Harness (${{ matrix.os }}, ${{ matrix.host }})
