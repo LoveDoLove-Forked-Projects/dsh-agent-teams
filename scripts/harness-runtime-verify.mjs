@@ -4,7 +4,7 @@
  *   --artifact <package.tgz> --report-dir <isolated-directory>
  * Optional: --runtime-dir <already prepared directory> --prepare-only
  */
-import { runRuntimeScenarios, runtimeScenarios } from './harness-runtime-scenarios.mjs';
+import { runRuntimeScenarios, runtimeScenarios, runPluginInstallation } from './harness-runtime-scenarios.mjs';
 import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync, readFileSync, existsSync, copyFileSync } from 'node:fs';
 import { resolve, join, dirname } from 'node:path';
@@ -125,7 +125,7 @@ function verifyCohort() {
     json(join(report, 'cohort.json'), result);
     return result;
 }
-const testFiles = Object.fromEntries(['harness-runtime-verify.mjs', 'harness-runtime-scenarios.mjs', 'fixtures/harness-runtime-llm.mjs', 'fixtures/harness-runtime-resume.mjs', 'fixtures/harness-runtime-idle.mjs', 'fixtures/harness-runtime-entry.mjs', 'fixtures/harness-runtime-web-approval.mjs', 'fixtures/harness-runtime-protocol.mjs', 'fixtures/harness-runtime-stability.mjs'].map(path => [path, hash(join(dirname(fileURLToPath(import.meta.url)), path))]));
+const testFiles = Object.fromEntries(['compatibility.mjs', '../compatibility.json', 'harness-validation.mjs', 'harness-runtime-verify.mjs', 'harness-runtime-scenarios.mjs', 'fixtures/harness-runtime-llm.mjs', 'fixtures/harness-runtime-resume.mjs', 'fixtures/harness-runtime-idle.mjs', 'fixtures/harness-runtime-entry.mjs', 'fixtures/harness-runtime-web-approval.mjs', 'fixtures/harness-runtime-protocol.mjs', 'fixtures/harness-runtime-stability.mjs'].map(path => [path, hash(join(dirname(fileURLToPath(import.meta.url)), path))]));
 let artifactSha;
 const manifestPath = join(runtime, 'package.json');
 let manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : undefined;
@@ -162,14 +162,7 @@ if (plugin.name !== '@nanmicoder/dsh-agent-teams') throw Error('Artifact package
 const runs = await runRuntimeScenarios({ report, runtime, command, environment, selectedScenarios: flags.has('--scenario') ? [flags.get('--scenario')] : scenarios });
 // Exercise the same compatibility gate used by the plugin settings UI. Runtime
 // fixtures alone link the package directly and cannot prove installation works.
-if (['0.2.1-rc.2', '0.2.1-rc.3'].includes(version)) {
-    const home = join(report, 'plugin-install-home');
-    const install = await command([process.execPath, join(runtime, 'node_modules/@deepseek-ai/dsh/lib/bin.js'), 'plugin', '--profile', 'web', 'add', '--save-exact', resolve(flags.get('--artifact'))], runtime, environment({ DSH_HOME: home, DSH_TELEMETRY_DISABLED: '1' }), 'plugin-manager-install', 120000);
-    const installedPath = join(home, 'profiles/web/node_modules/@nanmicoder/dsh-agent-teams/package.json');
-    const installed = existsSync(installedPath) ? JSON.parse(readFileSync(installedPath, 'utf8')) : undefined;
-    const assertions = { exit0: install.code === 0 && !install.timedOut, exactPluginVersion: installed?.version === plugin.version };
-    runs.push({ scenario: 'plugin-manager-install', passed: Object.values(assertions).every(Boolean), assertions });
-}
+runs.push(...await runPluginInstallation({ version, pluginVersion: plugin.version, artifact: flags.get('--artifact'), runtime, report, command, environment }));
 const passed = runs.every(x => x.passed);
 json(join(report, 'result.json'), { passed, version, artifactSha256: artifactSha, pluginVersion: plugin.version, testFiles, node: process.version, platform: process.platform, arch: process.arch, cohortCount: cohort.count, runs, unverified: ['real provider APIs and credentials', 'browser interaction', 'other operating systems', 'native terminal execution', 'live user-data migration'] });
 console.log(JSON.stringify({ passed, version, report, runs }, null, 2));

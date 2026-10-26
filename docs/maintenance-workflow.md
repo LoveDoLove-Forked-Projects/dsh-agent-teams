@@ -6,6 +6,12 @@
 
 [compatibility.json](../compatibility.json) 是宿主矩阵的唯一来源。`scripts/compatibility.mjs` 校验精确开发依赖、声明的 peer 目标和依赖覆盖策略，并通过 `--github-output` 输出 CI matrix。不要在另一个脚本里维护第二份版本数组。
 
+升级前运行 `pnpm check:upstream`：只读查询官方宿主 `latest` / `next` 和插件 `latest`，分别报告未验证的宿主与源码已声明、但发布包尚未声明的目标。发现差距时退出 1；网络失败、缺失渠道或无法识别的声明不会被当作成功。它不自动修改清单、安装、发布，也不作为离线回归的联网前置条件。当前是按需命令，没有自动定时任务；其他渠道或未挂 tag 的版本仍须显式核对。
+
+完成精确源码/产物审计后修改支持清单，运行 `pnpm sync:compatibility` 生成 package.json 内全部 DSH peer 声明，再运行 `pnpm verify:compatibility`。生成器不会添加宿主、改变开发基线或修复混装；后两者仍按明确迁移另行处理。普通校验、构建和发布不自动同步，遗漏的提交仍会被门禁拒绝。`engines.dsh` 若存在，必须与精确声明一致，不能利用它在官方安装器中的优先级绕过 peer 约束。
+
+`scripts/harness-validation.mjs` 从同一清单生成执行目标并校验对应报告。新目标默认 Ubuntu + Windows，并必须通过真实 `plugin-manager-install`；无需更新脚本或 YAML 中的版本数组。旧目标的 `platforms` 与 `legacyDirectInstallReason` 显式记录历史覆盖限制，不能作为新增目标时复制的默认模板。新增例外须说明实际原因并审查。尚未列入支持清单的候选也会运行安装探针；探针通过本身不授予支持资格。
+
 发布前源码预适配记录在同一清单的 `sourceCandidates`，包含预计版本、官方源码完整 SHA 和证据路径。peer 精确枚举已发布支持目标与源码候选；`--github-output` 仍只输出 `supportedHosts`，不会尝试下载尚未发布的 npm 版本。doctor 将候选标为 `source-preview`，保留完整依赖闭包检查，不将文件版本检查当作正式产物验收。发布后核对最终 SHA 与分包产物，完成 npm 和桌面验收，再把该目标从 `sourceCandidates` 移入 `supportedHosts` 并按需要更新开发基线。当前工作见 [0.2.1-rc.3 适配](./harness-0.2.1-rc.3/README.md)。
 
 | 当前候选宿主 | 定位 | 安装与支持边界 |
@@ -100,7 +106,7 @@ runner 为 `scripts/harness-runtime-verify.mjs --host-version <exact> --artifact
 
 CI 仅上传报告、日志和 fixture 状态，不上传 runtime 的 node_modules、缓存、隔离 HOME 或整份 profile 存储。报告保留 14 天；发布维护者应将关键版本、摘要、结果和限制归档到发布记录，不能只留下会过期的临时目录。
 
-自动矩阵的运行时平台是 Ubuntu。Windows 目前覆盖静态检查；真实模型 API、浏览器、Windows/Desktop 产品运行和用户数据迁移需要额外证据。UI 改动按 Ego Lite 规则验证真实宿主挂载和交互；有凭据的 provider 验证记录结果，不在仓库保存凭据。跳过、不适用和失败应分别记录，不能统一写“全部通过”。
+当前自动矩阵包括全部 11 个目标的 Ubuntu runtime，以及 rc.2 / rc.3 的 Windows runtime，共 13 个宿主/平台目标。真实模型 API、原生 Desktop 交互和用户数据迁移仍需要额外证据。UI 改动按 Ego Lite 规则验证真实宿主挂载和交互；有凭据的 provider 验证记录结果，不在仓库保存凭据。跳过、不适用和失败应分别记录，不能统一写“全部通过”。
 
 ## 发布同一份验收产物
 
