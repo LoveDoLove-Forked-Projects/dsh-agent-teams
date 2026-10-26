@@ -6,10 +6,11 @@
 
 [compatibility.json](../compatibility.json) 是宿主矩阵的唯一来源。`scripts/compatibility.mjs` 校验精确开发依赖、声明的 peer 目标和依赖覆盖策略，并通过 `--github-output` 输出 CI matrix。不要在另一个脚本里维护第二份版本数组。
 
-发布前源码预适配记录在同一清单的 `sourceCandidates`，包含预计版本、官方源码完整 SHA 和证据路径。peer 精确枚举已发布支持目标与源码候选；`--github-output` 仍只输出 `supportedHosts`，不会尝试下载尚未发布的 npm 版本。doctor 将候选标为 `source-preview`，保留完整依赖闭包检查，不将文件版本检查当作正式产物验收。发布后核对最终 SHA 与分包产物，完成 npm 和桌面验收，再把该目标从 `sourceCandidates` 移入 `supportedHosts` 并按需要更新开发基线。当前工作见 [0.2.1-rc.2 适配](./harness-0.2.1-rc.2/README.md)。
+发布前源码预适配记录在同一清单的 `sourceCandidates`，包含预计版本、官方源码完整 SHA 和证据路径。peer 精确枚举已发布支持目标与源码候选；`--github-output` 仍只输出 `supportedHosts`，不会尝试下载尚未发布的 npm 版本。doctor 将候选标为 `source-preview`，保留完整依赖闭包检查，不将文件版本检查当作正式产物验收。发布后核对最终 SHA 与分包产物，完成 npm 和桌面验收，再把该目标从 `sourceCandidates` 移入 `supportedHosts` 并按需要更新开发基线。当前工作见 [0.2.1-rc.3 适配](./harness-0.2.1-rc.3/README.md)。
 
 | 当前候选宿主 | 定位 | 安装与支持边界 |
 | --- | --- | --- |
+| `0.2.1-rc.3` | preview | 已发布 npm 精确目标；先进入矩阵，推荐宿主与开发基线仍为 rc.2 |
 | `0.2.1-rc.2` | recommended | 已发布 npm 精确目标；RC 不是 GA |
 | `0.2.1-rc.1` | legacy | 保留上一推荐 RC |
 | `0.2.0-rc.2` / `0.1.7-rc.2` | legacy | 保留此前推荐版本 |
