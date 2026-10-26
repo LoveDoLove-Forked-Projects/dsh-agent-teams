@@ -69,7 +69,13 @@ The conversation card and activity panel use Harness's official locale service. 
 
 ### Desktop app
 
-In the app sidebar, open **Plugins → Add plugin**. For an update available immediately after release, enter the GitHub default-branch spec (no version suffix):
+In the app sidebar, open **Plugins → Add plugin**. You can install directly from GitHub by pasting this repository URL into the plugin input, without a version, tag, or commit suffix:
+
+```text
+https://github.com/NanmiCoder/dsh-agent-teams
+```
+
+This installs from the default branch and is available immediately after release. The equivalent shorthand is also supported:
 
 ```text
 github:NanmiCoder/dsh-agent-teams
