@@ -68,7 +68,13 @@
 
 ### 桌面端
 
-在应用侧栏打开「插件 → 添加插件」。刚发布后需要立即安装时，输入 GitHub 默认分支规格，无需填写版本号：
+在应用侧栏打开「插件 → 添加插件」，可以直接通过 GitHub 地址安装。在插件输入框中粘贴下面的仓库地址，无需追加版本号、tag 或 commit：
+
+```text
+https://github.com/NanmiCoder/dsh-agent-teams
+```
+
+此方式从默认分支安装，刚发布后即可使用。也支持下面的等价简写：
 
 ```text
 github:NanmiCoder/dsh-agent-teams
