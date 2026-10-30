@@ -36,7 +36,7 @@ Ask in natural language. The plugin provides the team protocol, 14 coordination 
 
 ## Releases
 
-[Latest release](https://github.com/NanmiCoder/dsh-agent-teams/releases/latest) adds Harness `0.2.1-rc.3` support, fixes Windows packaging and runtime verification, and prevents missing installation checks when adding future hosts. npm installs use `latest`; Git installs use the default branch. The recommended Harness host remains `0.2.1-rc.2`. See the exact [support matrix](./compatibility.json) and [release notes](./release-notes/v0.1.27.md).
+[Latest release](https://github.com/NanmiCoder/dsh-agent-teams/releases/latest) fixes installation on Harness `0.2.1-rc.4`, `0.2.1-rc.5` (npm `latest`) and later releases. The plugin now declares only a minimum host (`>=0.1.2-alpha.2`) instead of listing tested versions, so a new Harness release no longer blocks installation. npm installs use `latest`; Git installs use the default branch. The recommended Harness host remains `0.2.1-rc.2`. See the [tested matrix](./compatibility.json) and [release notes](./release-notes/v0.1.28.md).
 
 ## Why AgentTeams?
 
@@ -55,17 +55,20 @@ The conversation card and activity panel use Harness's official locale service. 
 
 ## Install and choose versions
 
-**Recommended pair: DeepSeek Harness `0.2.1-rc.2` + AgentTeams `0.1.27`. The host remains an RC.**
+**Recommended pair: DeepSeek Harness `0.2.1-rc.2` + AgentTeams `0.1.28`. The host remains an RC.**
 
 | Use case | DeepSeek Harness | AgentTeams plugin |
 | --- | --- | --- |
-| **Recommended** | **`0.2.1-rc.2`** | **`0.1.27`** |
-| Preview host | `0.2.1-rc.3` | `0.1.27` |
-| Previous recommended RC | `0.2.1-rc.1`, `0.2.0-rc.2`, `0.1.7-rc.2` | `0.1.27` |
-| Legacy RC | `0.1.5-rc.1`, `0.1.5-rc.2`, `0.1.5-rc.3` | `0.1.27` |
-| Retaining an older RC | `0.1.2-rc.1` | `0.1.27` |
-| Developer Alpha testing | `0.1.2-alpha.5` | `0.1.27` |
-| Retaining an older Alpha | `0.1.2-alpha.2` | `0.1.27` |
+| **Recommended** | **`0.2.1-rc.2`** | **`0.1.28`** |
+| Preview host | `0.2.1-rc.3` | `0.1.28` |
+| Previous recommended RC | `0.2.1-rc.1`, `0.2.0-rc.2`, `0.1.7-rc.2` | `0.1.28` |
+| Legacy RC | `0.1.5-rc.1`, `0.1.5-rc.2`, `0.1.5-rc.3` | `0.1.28` |
+| Retaining an older RC | `0.1.2-rc.1` | `0.1.28` |
+| Developer Alpha testing | `0.1.2-alpha.5` | `0.1.28` |
+| Retaining an older Alpha | `0.1.2-alpha.2` | `0.1.28` |
+| Newer hosts | `0.2.1-rc.4`, `0.2.1-rc.5` and later | `0.1.28` |
+
+All rows except the last are the CI-tested matrix. Harness `0.2.1-rc.4` and later releases can install the plugin directly; `0.2.1-rc.5` passed the full runtime suite locally on macOS but is not yet in the CI matrix.
 
 ### Desktop app
 
@@ -98,7 +101,7 @@ The command selects the host's npm `latest`; check `dsh --version` against the s
 
 ### CLI / Web: 2. Install the AgentTeams plugin
 
-Install or upgrade from npm using the package name (resolves npm `latest`, currently `0.1.27`):
+Install or upgrade from npm using the package name (resolves npm `latest`, currently `0.1.28`):
 
 ```sh
 dsh plugin --profile web add --save-exact @nanmicoder/dsh-agent-teams@latest
@@ -116,7 +119,7 @@ The `@latest` channel explicitly requests the newest published plugin when updat
 
 For a manually cloned checkout, run `pnpm install --frozen-lockfile` and `pnpm build` after pulling, then restart the corresponding Harness process. Updating Git alone does not update local build output. See the [maintenance guide](./docs/maintenance-workflow.md).
 
-> For older `0.1.0-*` / `0.1.1-*` or unlisted hosts, keep a working pair and follow the [older-version and diagnostic guide](./docs/maintenance-workflow.md).
+> For `0.1.0-*` / `0.1.1-*` hosts older than `0.1.2-alpha.2`, keep a working pair and follow the [older-version and diagnostic guide](./docs/maintenance-workflow.md).
 
 See the full [compatibility matrix](./compatibility.json), [source installation and Alpha testing guide](./docs/maintenance-workflow.md), and [verification coverage and platform limits](./docs/maintenance-2026-09-06/release/README.md).
 

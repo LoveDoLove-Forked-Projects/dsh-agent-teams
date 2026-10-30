@@ -36,7 +36,7 @@
 
 ## 版本更新
 
-[最新发布](https://github.com/NanmiCoder/dsh-agent-teams/releases/latest) 增加 Harness `0.2.1-rc.3` 支持，修复 Windows 打包与运行验证问题，并补齐新增宿主时容易遗漏的安装检查。npm 安装使用 `latest`，GitHub 安装使用默认分支，不需要填写版本号。推荐宿主仍为 `0.2.1-rc.2`。详见[兼容清单](./compatibility.json)和[发布说明](./release-notes/v0.1.27.md)。
+[最新发布](https://github.com/NanmiCoder/dsh-agent-teams/releases/latest) 修复在 Harness `0.2.1-rc.4`、`0.2.1-rc.5`（npm `latest`）及之后版本上无法安装的问题。插件不再逐个列出已测宿主，只声明最低宿主版本 `>=0.1.2-alpha.2`，Harness 发布新版本不会再挡住安装。npm 安装使用 `latest`，GitHub 安装使用默认分支，不需要填写版本号。推荐宿主仍为 `0.2.1-rc.2`。详见[测试矩阵](./compatibility.json)和[发布说明](./release-notes/v0.1.28.md)。
 
 ## 为什么需要 AgentTeams？
 
@@ -54,17 +54,20 @@
 
 ## 安装与版本选择
 
-**推荐组合：DeepSeek Harness `0.2.1-rc.2` + AgentTeams `0.1.27`。宿主仍为 RC 版本。**
+**推荐组合：DeepSeek Harness `0.2.1-rc.2` + AgentTeams `0.1.28`。宿主仍为 RC 版本。**
 
 | 使用场景 | DeepSeek Harness | AgentTeams 插件 |
 | --- | --- | --- |
-| **推荐版本** | **`0.2.1-rc.2`** | **`0.1.27`** |
-| 预览宿主 | `0.2.1-rc.3` | `0.1.27` |
-| 上一推荐 RC | `0.2.1-rc.1`, `0.2.0-rc.2`, `0.1.7-rc.2` | `0.1.27` |
-| 保留旧 RC | `0.1.5-rc.1`, `0.1.5-rc.2`, `0.1.5-rc.3` | `0.1.27` |
-| 保留旧 RC | `0.1.2-rc.1` | `0.1.27` |
-| 开发者测试 Alpha | `0.1.2-alpha.5` | `0.1.27` |
-| 保留旧 Alpha | `0.1.2-alpha.2` | `0.1.27` |
+| **推荐版本** | **`0.2.1-rc.2`** | **`0.1.28`** |
+| 预览宿主 | `0.2.1-rc.3` | `0.1.28` |
+| 上一推荐 RC | `0.2.1-rc.1`, `0.2.0-rc.2`, `0.1.7-rc.2` | `0.1.28` |
+| 保留旧 RC | `0.1.5-rc.1`, `0.1.5-rc.2`, `0.1.5-rc.3` | `0.1.28` |
+| 保留旧 RC | `0.1.2-rc.1` | `0.1.28` |
+| 开发者测试 Alpha | `0.1.2-alpha.5` | `0.1.28` |
+| 保留旧 Alpha | `0.1.2-alpha.2` | `0.1.28` |
+| 更新的宿主 | `0.2.1-rc.4`、`0.2.1-rc.5` 及之后版本 | `0.1.28` |
+
+除最后一行外均为 CI 测试矩阵。`0.2.1-rc.4` 及之后发布的 Harness 都可以直接安装；`0.2.1-rc.5` 已在本地 macOS 跑通完整运行场景，尚未加入 CI 矩阵。
 
 ### 桌面端
 
@@ -97,7 +100,7 @@ dsh --version
 
 ### CLI / Web：2. 安装 AgentTeams 插件
 
-从 npm 安装或升级插件（不带版本号时使用 npm `latest`，当前为正式版 `0.1.27`）：
+从 npm 安装或升级插件（不带版本号时使用 npm `latest`，当前为正式版 `0.1.28`）：
 
 ```sh
 dsh plugin --profile web add --save-exact @nanmicoder/dsh-agent-teams@latest
@@ -115,7 +118,7 @@ dsh plugin --profile web add github:NanmiCoder/dsh-agent-teams
 
 手动克隆源码的用户，拉取代码后需重新运行 `pnpm install --frozen-lockfile` 和 `pnpm build`，再重启对应的 Harness；只更新 Git 不会更新本地构建产物。详见[维护指南](./docs/maintenance-workflow.md)。
 
-> 旧 `0.1.0-*` / `0.1.1-*` 或其他未列出的宿主，请先保留已工作的组合，参考[旧版本与诊断指引](./docs/maintenance-workflow.md)。
+> 低于 `0.1.2-alpha.2` 的旧 `0.1.0-*` / `0.1.1-*` 宿主，请先保留已工作的组合，参考[旧版本与诊断指引](./docs/maintenance-workflow.md)。
 
 完整[兼容清单](./compatibility.json)、[源码安装与 Alpha 验证](./docs/maintenance-workflow.md)、[已验证范围与平台限制](./docs/maintenance-2026-09-06/release/README.md)。
 
